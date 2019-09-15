@@ -1,0 +1,10 @@
+from: Color [A=255, R=86, G=18, B=18]
+to: Color [A=255, R=255, G=255, B=255]
+name: red barnsley fern
+edges: [0 -2 ], [2 0 ], [0 2 ], [-2 0 ], 
+bailout: 3000
+cutoff: 2
+height: 4320
+highest: 100000
+width: 7680
+initialTime: 9/14/2019 10:16:59 PM
