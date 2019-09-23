@@ -39,5 +39,13 @@ namespace Sandbox
             return m;
         }
 
+        public static double Normalize(int value, int min, int max)
+        {
+            //if (min == 0 || max == 0)
+            //{
+            //    return value;
+            //}
+            return (value - min) / (max - min);
+        }
     }
 }

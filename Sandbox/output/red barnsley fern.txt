@@ -4,7 +4,7 @@ name: red barnsley fern
 edges: [0 -2 ], [2 0 ], [0 2 ], [-2 0 ], 
 bailout: 3000
 cutoff: 2
-height: 4320
-highest: 100000
-width: 7680
-initialTime: 9/14/2019 10:16:59 PM
+height: 2160
+highest: 10000
+width: 3840
+initialTime: 9/19/2019 11:29:23 PM

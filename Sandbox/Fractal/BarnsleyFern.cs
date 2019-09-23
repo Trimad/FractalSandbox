@@ -26,7 +26,7 @@ namespace Sandbox.Fractal
         {
             Console.WriteLine(p.TimeStamp + " - Rendering a Barnsley Fern.");
             
-            int[] pixels = new int[p.Width*p.Height];
+            int[] exposure = new int[p.Width*p.Height];
             int bound = (p.Width - p.Height) / 2;
             //This first pass draws the Barnsley Fern like normal.
             while (highest < p.Highest)
@@ -37,15 +37,15 @@ namespace Sandbox.Fractal
                 int index = px + py * p.Width;
                 if (index >= 0 && index < (p.Width * p.Height))
                 {
-                    pixels[index]++;
-                    if (highest < pixels[index]) { highest = pixels[index]; }
+                    exposure[index]++;
+                    if (highest < exposure[index]) { highest = exposure[index]; }
                 }
             }
 
-            return pixels;
+            return exposure;
         }
 
-        private static void getPoint()
+        private unsafe static void getPoint()
         {
             double r1 = rand.NextDouble();
             double dx;

@@ -8,6 +8,33 @@ namespace Sandbox
     public static class Colorize
     {
 
+        public static int[] Normalize(int[] exposure, Properties p) {
+
+            int min = int.MaxValue;
+            int max = 0;
+            //1. Find the minimum and maximum values.
+            Parallel.For(0, exposure.Length, i =>
+            {
+                if (exposure[i] < min) { min = exposure[i]; }
+                if (exposure[i] > max) { max = exposure[i]; }
+            });
+            //2. Normalize every pixel to a value between 0 and 1.
+            //3. Multiply that normalized value by 255. 
+            _ = Parallel.For(0, exposure.Length, i =>
+            {
+                double norm = Auxiliary.Normalize(exposure[i], min, max);
+                int pixel = (int)(norm*255);
+                if (norm > 1)
+                {
+                    //Console.WriteLine(norm);
+                }
+                
+                exposure[i] = 255 << 24 | pixel << 16 | pixel << 8 | pixel << 0;
+
+            });
+            return exposure;
+        }
+
         public static int[] Iterations(int[] exposure, Properties p)
         {
             Console.WriteLine(p.TimeStamp + " - Colorizing using an iterative algorithm.");
@@ -21,14 +48,14 @@ namespace Sandbox
         }
 
         //y=mx+b
-        public static int[] Slope(int[] exposure, Properties p)
-        {
+        //public static int[] Slope(int[] exposure, Properties p)
+        //{
 
-            Parallel.For(0, exposure.Length, i =>
-            {
-            });
-                return exposure;
-        }
+        //    Parallel.For(0, exposure.Length, i =>
+        //    {
+        //    });
+        //        return exposure;
+        //}
 
         public static int[] Lerp(int[] exposure, Properties p)
         {
@@ -68,10 +95,10 @@ namespace Sandbox
                     int b = (int)Math.Clamp(Auxiliary.MapDouble(mLog, 0, 1, p.From.B, p.To.B), 0, 255);
                     exposure[i] = 255 << 24 | r << 16 | g << 8 | b << 0;
                 }
-                //else
-                //{
-                //    exposure[i] = 255 << 24 | 0 << 16 | 0 << 8 | 0 << 0;
-                //}
+                else
+                {
+                    exposure[i] = 255 << 24 | 0 << 16 | 0 << 8 | 0 << 0;
+                }
 
             });
             
