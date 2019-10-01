@@ -9,11 +9,9 @@ namespace Sandbox.Fractal
         private static int zoom = 1;
         public static int[] Render(Properties p)
         {
-            Console.WriteLine(p.TimeStamp + " - Rendering a Buddhabrot.");
             int[] pixels = new int[p.Width*p.Height];
             while (highest < p.Highest)
             {
-                Console.WriteLine(highest);
                 Parallel.For(0, p.Width, x =>
                 {
                     for (int y = 0; y < p.Height; y++)
@@ -25,6 +23,7 @@ namespace Sandbox.Fractal
                     }
                 });
             }
+            highest = 0;
             return pixels;
         }
 

@@ -19,6 +19,7 @@ namespace Sandbox
         private int height;
         private int highest;
         private int width;
+        private double zoom;
         private readonly DateTime initialTime = DateTime.Now;
 
         public Color From { get => from; set => from = value; }
@@ -31,6 +32,7 @@ namespace Sandbox
         public int Highest { get => highest; set => highest = value; }
         public int Width { get => width; set => width = value; }
         public string Name { get => name; set => name = value; }
+        public double Zoom { get => zoom; set => zoom = value; }
 
         public string[] ToStringArray()
         {
@@ -56,6 +58,7 @@ namespace Sandbox
                 nameof(height)+": "+ height.ToString(),
                 nameof(highest)+": "+ highest.ToString(),
                 nameof(width)+": "+ width.ToString(),
+                nameof(zoom)+": "+ zoom.ToString(),
                 nameof(initialTime)+": "+ initialTime.ToString()
             };
 

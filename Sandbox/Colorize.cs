@@ -47,6 +47,36 @@ namespace Sandbox
             return exposure;
         }
 
+        public static int[] IterationsCombine(int[] red, int[] green, int[] blue, Properties p)
+        {
+            int[] exposure = new int[red.Length];
+            Array.Clear(exposure, 0, exposure.Length);
+
+            Console.WriteLine(p.TimeStamp + " - Colorizing using an iterative algorithm.");
+            _ = Parallel.For(0, red.Length, i =>
+            {
+
+                int r = red[i];
+                int g = green[i];
+                int b = blue[i];
+
+                exposure[i] = 255 << 24 | 0 << 16 | 0 << 8 | 0 << 0; //set the alpha to 255
+
+                //Red
+                if (exposure[i] + r < 255){ exposure[i] += 0 << 24 | r << 16 | 0 << 8 | 0 << 0; }
+                else { exposure[i] = 0 << 24 | 255 << 16 | 0 << 8 | 0 << 0; }
+                //Green
+                if (exposure[i] + g < 255){exposure[i] += 0 << 24 | 0 << 16 | g << 8 | 0 << 0;}
+                else { exposure[i] = 0 << 24 | 0 << 16 | 255 << 8 | 0 << 0; }
+                //Blue
+                if (exposure[i] + b < 255){exposure[i] += 0 << 24 | 0 << 16 | 0 << 8 | b << 0;}
+                else { exposure[i] = 0 << 24 | 0 << 16 | 0 << 8 | 255 << 0; }
+            });
+
+            return exposure;
+
+        }
+
         //y=mx+b
         //public static int[] Slope(int[] exposure, Properties p)
         //{

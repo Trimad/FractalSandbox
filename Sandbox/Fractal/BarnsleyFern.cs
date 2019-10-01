@@ -23,9 +23,7 @@ namespace Sandbox.Fractal
         private static double y = 0;
         private static int highest = 0;
         public static int[] Render(Properties p)
-        {
-            Console.WriteLine(p.TimeStamp + " - Rendering a Barnsley Fern.");
-            
+        {            
             int[] exposure = new int[p.Width*p.Height];
             int bound = (p.Width - p.Height) / 2;
             //This first pass draws the Barnsley Fern like normal.
