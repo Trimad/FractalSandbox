@@ -5,11 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Sandbox.Fractal
+namespace Sandbox.Fractals
 {
-    public class Julia
+    public class Julia:Fractal
     {
-        public static int[] Render(Properties p)
+        public Julia() {
+            name = "Julia";
+        }
+
+        public override int[] Render(Properties p)
         {
             int[] exposure = new int[p.Width * p.Height];
             double zoom = 1;
@@ -33,10 +37,7 @@ namespace Sandbox.Fractal
                     }
                     while (z.Magnitude() <= 2.0 && iteration++ < p.Bailout);
                     exposure[x + y * p.Width] = iteration;
-
                 }
-
-
             }
             return exposure;
 

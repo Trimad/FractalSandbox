@@ -5,35 +5,8 @@ using System.Threading.Tasks;
 
 namespace Sandbox
 {
-    public static class Colorize
+    public static class Stylize
     {
-
-        public static int[] Normalize(int[] exposure, Properties p) {
-
-            int min = int.MaxValue;
-            int max = 0;
-            //1. Find the minimum and maximum values.
-            Parallel.For(0, exposure.Length, i =>
-            {
-                if (exposure[i] < min) { min = exposure[i]; }
-                if (exposure[i] > max) { max = exposure[i]; }
-            });
-            //2. Normalize every pixel to a value between 0 and 1.
-            //3. Multiply that normalized value by 255. 
-            _ = Parallel.For(0, exposure.Length, i =>
-            {
-                double norm = Auxiliary.Normalize(exposure[i], min, max);
-                int pixel = (int)(norm*255);
-                if (norm > 1)
-                {
-                    //Console.WriteLine(norm);
-                }
-                
-                exposure[i] = 255 << 24 | pixel << 16 | pixel << 8 | pixel << 0;
-
-            });
-            return exposure;
-        }
 
         public static int[] Iterations(int[] exposure, Properties p)
         {
@@ -46,46 +19,6 @@ namespace Sandbox
 
             return exposure;
         }
-
-        public static int[] IterationsCombine(int[] red, int[] green, int[] blue, Properties p)
-        {
-            int[] exposure = new int[red.Length];
-            Array.Clear(exposure, 0, exposure.Length);
-
-            Console.WriteLine(p.TimeStamp + " - Colorizing using an iterative algorithm.");
-            _ = Parallel.For(0, red.Length, i =>
-            {
-
-                int r = red[i];
-                int g = green[i];
-                int b = blue[i];
-
-                exposure[i] = 255 << 24 | 0 << 16 | 0 << 8 | 0 << 0; //set the alpha to 255
-
-                //Red
-                if (exposure[i] + r < 255){ exposure[i] += 0 << 24 | r << 16 | 0 << 8 | 0 << 0; }
-                else { exposure[i] = 0 << 24 | 255 << 16 | 0 << 8 | 0 << 0; }
-                //Green
-                if (exposure[i] + g < 255){exposure[i] += 0 << 24 | 0 << 16 | g << 8 | 0 << 0;}
-                else { exposure[i] = 0 << 24 | 0 << 16 | 255 << 8 | 0 << 0; }
-                //Blue
-                if (exposure[i] + b < 255){exposure[i] += 0 << 24 | 0 << 16 | 0 << 8 | b << 0;}
-                else { exposure[i] = 0 << 24 | 0 << 16 | 0 << 8 | 255 << 0; }
-            });
-
-            return exposure;
-
-        }
-
-        //y=mx+b
-        //public static int[] Slope(int[] exposure, Properties p)
-        //{
-
-        //    Parallel.For(0, exposure.Length, i =>
-        //    {
-        //    });
-        //        return exposure;
-        //}
 
         public static int[] Lerp(int[] exposure, Properties p)
         {
@@ -148,7 +81,7 @@ namespace Sandbox
                     ramp = 1;
                 }
 
-                int r = (int)Math.Clamp(ramp * 255,0,255);
+                int r = (int)Math.Clamp(ramp * 255, 0, 255);
                 int g = (int)Math.Clamp(ramp * 255, 0, 255);
                 int b = (int)Math.Clamp(ramp * 255, 0, 255);
 
@@ -159,11 +92,54 @@ namespace Sandbox
             return exposure;
         }
 
-        public static int[] Raw(int[] exposure, Properties p)
+        /*
+ * INPUT: An array of doubles that has been normalized between 0 and 1.
+ * OUTPUT: An array of integers that has been mapped to a value between 0 and 255.
+ */
+        public static int[] Distance(double[] arr)
         {
-            return exposure;
+            int[] pixels = new int[arr.Length];
+
+            //2.  Normalize the values mapped to min and max.
+            Parallel.For(0, arr.Length, i => {
+                int pixel = (int)(arr[i] * (double)255);
+                //Console.WriteLine(i + " * 255 = " + pixel);
+                //if (pixel > 1) { Console.WriteLine(pixel); }
+                pixels[i] = 255 << 24 | pixel << 16 | pixel << 8 | pixel << 0;
+            });
+
+            return pixels;
+
         }
 
     }
+    //public static int[] IterationsCombine(int[] red, int[] green, int[] blue, Properties p)
+    //{
+    //    int[] exposure = new int[red.Length];
+    //    Array.Clear(exposure, 0, exposure.Length);
 
+    //    Console.WriteLine(p.TimeStamp + " - Colorizing using an iterative algorithm.");
+    //    _ = Parallel.For(0, red.Length, i =>
+    //    {
+
+    //        int r = red[i];
+    //        int g = green[i];
+    //        int b = blue[i];
+
+    //        exposure[i] = 255 << 24 | 0 << 16 | 0 << 8 | 0 << 0; //set the alpha to 255
+
+    //        //Red
+    //        if (exposure[i] + r < 255){ exposure[i] += 0 << 24 | r << 16 | 0 << 8 | 0 << 0; }
+    //        else { exposure[i] = 0 << 24 | 255 << 16 | 0 << 8 | 0 << 0; }
+    //        //Green
+    //        if (exposure[i] + g < 255){exposure[i] += 0 << 24 | 0 << 16 | g << 8 | 0 << 0;}
+    //        else { exposure[i] = 0 << 24 | 0 << 16 | 255 << 8 | 0 << 0; }
+    //        //Blue
+    //        if (exposure[i] + b < 255){exposure[i] += 0 << 24 | 0 << 16 | 0 << 8 | b << 0;}
+    //        else { exposure[i] = 0 << 24 | 0 << 16 | 0 << 8 | 255 << 0; }
+    //    });
+
+    //    return exposure;
+
+    //}
 }

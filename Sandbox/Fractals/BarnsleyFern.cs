@@ -1,9 +1,15 @@
 ﻿using System;
 
-namespace Sandbox.Fractal
+namespace Sandbox.Fractals
 {
-    public class BarnsleyFern
+
+    public class BarnsleyFern : Fractal
     {
+
+        public BarnsleyFern() {
+            name = "Barnsley Fern";
+        }
+
         //public static readonly double[] DOMAIN = { -2.1820, 2.6558, 0, 9.9983 };
         //Edges = new double[,] { { 0, 9.9983 }, { 2.6558, 0 }, { 0, 0 }, { -2.1820, 0 } } //Barnsley Fern
         private static readonly Random rand = new Random(); //reuse this if you are generating many
@@ -22,7 +28,7 @@ namespace Sandbox.Fractal
         private static double x = 0;
         private static double y = 0;
         private static int highest = 0;
-        public static int[] Render(Properties p)
+        public override int[] Render(Properties p)
         {            
             int[] exposure = new int[p.Width*p.Height];
             int bound = (p.Width - p.Height) / 2;

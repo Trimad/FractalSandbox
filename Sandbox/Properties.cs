@@ -20,6 +20,7 @@ namespace Sandbox
         private int highest;
         private int width;
         private double zoom;
+        private double aspectRatio;
         private readonly DateTime initialTime = DateTime.Now;
 
         public Color From { get => from; set => from = value; }
@@ -33,6 +34,7 @@ namespace Sandbox
         public int Width { get => width; set => width = value; }
         public string Name { get => name; set => name = value; }
         public double Zoom { get => zoom; set => zoom = value; }
+        public double AspectRatio { get => aspectRatio; set => aspectRatio = value; }
 
         public string[] ToStringArray()
         {
