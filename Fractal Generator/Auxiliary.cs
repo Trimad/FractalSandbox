@@ -4,7 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Sandbox
+namespace Fractal_Generator
 {
     public class Auxiliary
     {

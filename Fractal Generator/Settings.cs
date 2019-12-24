@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sandbox
+namespace Fractal_Generator
 {
-    public class Properties
+    public class Settings
     {
 
         private Color from;
@@ -21,6 +21,8 @@ namespace Sandbox
         private int width;
         private double zoom;
         private double aspectRatio;
+        private int fractalIndex;
+        private int shaderIndex;
         private readonly DateTime initialTime = DateTime.Now;
 
         public Color From { get => from; set => from = value; }
@@ -35,6 +37,8 @@ namespace Sandbox
         public string Name { get => name; set => name = value; }
         public double Zoom { get => zoom; set => zoom = value; }
         public double AspectRatio { get => aspectRatio; set => aspectRatio = value; }
+        public int FractalIndex { get => fractalIndex; set => fractalIndex = value; }
+        public int ShaderIndex { get => shaderIndex; set => shaderIndex = value; }
 
         public string[] ToStringArray()
         {

@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Sandbox.Fractals
+namespace Fractal_Generator
 {
     public class Buddhabrot : Fractal
     {
-        public Buddhabrot(int[] pix, double[,,] dom, Properties pro)
+        public Buddhabrot(int[] pix, double[,,] dom, Settings settings)
         {
             name = "Buddhabrot";
             pixels = pix;
             domain = dom;
-            properties = pro;
+            properties = settings;
         }
 
         private static int highest = 0;
-        public override int[] Render(Properties p)
+        public override int[] Render(Settings p)
         {
 
             while(highest < properties.Highest)

@@ -22,26 +22,39 @@ namespace Sandbox
 
         public static int[] Lerp(int[] exposure, Properties p)
         {
+            double[] temp = Auxiliary.NormalizeArray(exposure);
 
-            Parallel.For(0, exposure.Length, i =>
-            {
-                int pixel = exposure[i];
-                if (pixel > 0)
-                {
-                    double howMuch = Math.Clamp(pixel/Math.Sqrt(p.Highest),0,1);
-                    int r = (int)Auxiliary.Lerp((double)p.From.R, (double)p.To.R, howMuch);
-                    int g = (int)Auxiliary.Lerp((double)p.From.G, (double)p.To.G, howMuch);
-                    int b = (int)Auxiliary.Lerp((double)p.From.B, (double)p.To.B, howMuch);
-                    exposure[i] = 255 << 24 | r << 16 | g << 8 | b << 0;
-                }
-                else {
-                exposure[i] = 255 << 24 | 0 << 16 | 0 << 8 | 0 << 0;
-                }
-            });
+            _ = Parallel.For(0, temp.Length, i =>
+              {
+
+                  int r = (int)Auxiliary.Lerp((double)p.From.R, (double)p.To.R, temp[i]);
+                  int g = (int)Auxiliary.Lerp((double)p.From.G, (double)p.To.G, temp[i]);
+                  int b = (int)Auxiliary.Lerp((double)p.From.B, (double)p.To.B, temp[i]);
+                  exposure[i] = 255 << 24 | r << 16 | g << 8 | b << 0;
+ 
+              });
 
             return exposure;
         }
 
+        public static int[] Sine(int[] exposure, Properties p)
+        {
+
+            _ = Parallel.For(0, exposure.Length, i =>
+            {
+                double r = (1 + Math.Sin(exposure[i] / 10)) / 2;
+                r *= 255;
+                double g = (1 + Math.Cos(exposure[i] / 10)) / 2;
+                g *= 255;
+                double b = (1 + Math.Sin(exposure[i] / 100)) / 2;
+                b *= 255;
+
+                exposure[i] = 255 << 24 | (int)r << 16 | (int)g << 8 | (int)b << 0;
+            });
+
+            return exposure;
+
+        }
         public static int[] Log10Color(int[] exposure, Properties p)
         {
             Console.WriteLine(p.TimeStamp+" - Colorizing using a Log_10 algorithm.");
@@ -68,14 +81,12 @@ namespace Sandbox
             return exposure;
         }
 
-        public static int[] Ramp(int[] exposure, Properties p)
+        public static int[] Ramp(int[] exposure, Properties p,double howMuch)
         {
             Console.WriteLine(p.TimeStamp + " - Colorizing using a ramping algorithm.");
             _ = Parallel.For(0, exposure.Length, i =>
             {
-                double ramp = exposure[i] / (p.Highest / 11.0f);
-                //float m = Auxiliary.mapFloat(p, 0, maxexposure, 0.5f, 0.70f);
-                // blow out ultra bright regions
+                double ramp = exposure[i] / (p.Highest / howMuch);
                 if (ramp > 1)
                 {
                     ramp = 1;

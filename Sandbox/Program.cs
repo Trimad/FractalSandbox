@@ -1,6 +1,5 @@
 ﻿using Sandbox.Fractals;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -12,33 +11,31 @@ namespace Sandbox
 {
     public class Program
     {
-        static int[] exposure;
         static int[] pixels;
         static double[,,] domain;
+        static Properties properties = new Properties
+        {
+            Bailout = 2000,
+            Cutoff = 3,
+            Edges = new double[,] { { 0, -2 }, { 2, 0 }, { 0, 2 }, { -2, 0 } }, //NESW from (0,0)
+            From = Color.FromArgb(0, 0, 0),
+            Highest = 100000,
+            To = Color.FromArgb(255, 255, 255),
+            Width = 1920*4,
+            Height = 1080*4,
+            //Zoom = 1,
+            AspectRatio = 1.77777777778
+        };
+
         static void Main(string[] args)
         {
-
-            Properties properties = new Properties
-            {
-                Bailout = 500,
-                Cutoff = 1,
-                Edges = new double[,] { { 0, -2 }, { 2, 0 }, { 0, 2 }, { -2, 0 } }, //NESW from (0,0)
-                From = Color.FromArgb(127, 0, 0),
-                Highest = 10000,
-                To = Color.FromArgb(127, 255, 255),
-                Width = 1920,
-                Height = 1080,
-                Zoom = 1,
-                AspectRatio = 1.77777777778
-            };
-
-            pixels = new int[properties.Width * properties.Height];
+            Console.WriteLine(properties.ToString());
+            pixels = new int[properties.Width*properties.Height];
             domain = new double[properties.Width, properties.Height, 2];
 
             for (int x = 0; x < properties.Width; x++)
             {
-                double mx = Auxiliary.MapDouble(x, 0, properties.Width, -2, 2);
-
+                double mx = Auxiliary.MapDouble(x, 0, properties.Width, -2 * properties.AspectRatio, 2 * properties.AspectRatio);
                 for (int y = 0; y < properties.Height; y++)
                 {
                     double my = Auxiliary.MapDouble(y, 0, properties.Height, -2, 2);
@@ -48,31 +45,31 @@ namespace Sandbox
 
             }
 
-            UI(properties);
+            UI();
 
-            GCHandle bitsHandle = GCHandle.Alloc(exposure, GCHandleType.Pinned);
+            GCHandle bitsHandle = GCHandle.Alloc(pixels, GCHandleType.Pinned);
             Bitmap image = new Bitmap(properties.Width, properties.Height, properties.Width * 4, PixelFormat.Format32bppArgb, bitsHandle.AddrOfPinnedObject());
             Console.WriteLine(properties.TimeStamp + " - Saving "+properties.Name+ "...");
             string text_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),"Output", properties.Name+".txt");
             string image_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),"Output", properties.Name + ".png");
 
-            Console.WriteLine(text_path);
-            Console.WriteLine(image_path);
+            //Console.WriteLine(text_path);
+            //Console.WriteLine(image_path);
             File.WriteAllLines(text_path, properties.ToStringArray());
             image.Save(image_path, ImageFormat.Png);
 
         }
 
-        static void UI(Properties p) {
+        static void UI() {
 
             List<Fractal> fractals = new List<Fractal>
             {
                 //new BarnsleyFern(),
                 //new BarnsleyFernDistance(),
-                new Buddhabrot(pixels,domain),
+                new Buddhabrot(pixels, domain, properties),
                 //new BuddhabrotDistance(),
                 //new BurningShip(),
-                //new Julia(),
+                new Julia(pixels, domain, properties)
                 //new Mandelbrot(),
                 //new MandelbrotDistance(),
                 //new SerpinskiTriangle()
@@ -91,41 +88,45 @@ namespace Sandbox
             Console.WriteLine(sb.ToString());
 
             //string input = Console.ReadLine();
-            string input = "0 2";
+            string input = "0 3";
             string[] split = input.Split(' ', '\t');
             int choose_fractal = Convert.ToInt32(split[0]);
             int choose_colorize = Convert.ToInt32(split[1]);
 
-            p.Name = fractals[choose_fractal].name;
-            Console.WriteLine(p.TimeStamp + " - Began rendering " + p.Name);
-            exposure = fractals[choose_fractal].Render(p);
-            Console.WriteLine(p.TimeStamp + " - Completed rendering " + p.Name);
+            properties.Name = fractals[choose_fractal].name;
+            //Console.WriteLine(properties.TimeStamp + " - Began rendering " + properties.Name);
+            //pixels = fractals[choose_fractal].Render(properties);
+            //Auxiliary.Save(pixels, properties.Name);
+            pixels = Auxiliary.Load(properties.Name);
+            Console.WriteLine(properties.TimeStamp + " - Completed rendering " + properties.Name);
 
             switch (choose_colorize)
             {
                 case 0:
-                    Console.WriteLine(p.TimeStamp + " - Began Iterations.");
-                    exposure = Stylize.Iterations(exposure, p);
-                    Console.WriteLine(p.TimeStamp + " - Completed Iterations.");
+                    Console.WriteLine(properties.TimeStamp + " - Began Iterations.");
+                    pixels = Stylize.Iterations(pixels, properties);
+                    Console.WriteLine(properties.TimeStamp + " - Completed Iterations.");
                     break;
                 case 1:
-                    Console.WriteLine(p.TimeStamp + " - Began Lerp.");
-                    exposure = Stylize.Lerp(exposure, p);
-                    Console.WriteLine(p.TimeStamp + " - Completed Lerp.");
+                    Console.WriteLine(properties.TimeStamp + " - Began Lerp.");
+                    pixels = Stylize.Lerp(pixels, properties);
+                    Console.WriteLine(properties.TimeStamp + " - Completed Lerp.");
                     break;
                 case 2:
-                    Console.WriteLine(p.TimeStamp + " - Began Log10Color.");
-                    exposure = Stylize.Log10Color(exposure, p);
-                    Console.WriteLine(p.TimeStamp + " - Completed Log10Color.");
+                    Console.WriteLine(properties.TimeStamp + " - Began Log10Color.");
+                    pixels = Stylize.Log10Color(pixels, properties);
+                    Console.WriteLine(properties.TimeStamp + " - Completed Log10Color.");
                     break;
-                //case 3:
-                    //Console.WriteLine(p.TimeStamp + " - Began Normalize.");
-                    //Auxiliary.NormalizeArray(exposure_iter);
-                    //Console.WriteLine(p.TimeStamp + " - Completed Normalize.");
-                    //break;
-                //case 4:
-                    //exposure_data = Auxiliary.NormalizeArray(exposure_data);
-                //    break;
+                case 3:
+                    Console.WriteLine(properties.TimeStamp + " - Began Ramp.");
+                    pixels = Stylize.Ramp(pixels, properties, 4);
+                    Console.WriteLine(properties.TimeStamp + " - Completed Ramp.");
+                    break;
+                case 4:
+                    Console.WriteLine(properties.TimeStamp + " - Began Sine.");
+                    pixels = Stylize.Sine(pixels, properties);
+                    Console.WriteLine(properties.TimeStamp + " - Completed sine.");
+                    break;
                 //case 5:
                 //    break;
                 default:
